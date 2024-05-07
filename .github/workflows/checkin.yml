@@ -2,7 +2,7 @@ name: Get Subscription Weekly
 
 on:
   schedule:
-    - cron: '0 16 * * 6'  # 北京时间每周日凌晨执行
+    - cron: '0 */12 * * *'  # 北京时间每周日凌晨执行
   workflow_dispatch: # 允许手动触发
 
 permissions:
@@ -44,3 +44,14 @@ jobs:
         gh gist edit ${{ secrets.GIST_ID }} --add "subscribes.txt"
         gh gist edit ${{ secrets.GIST_ID }} --add "domains.txt"
         gh gist edit ${{ secrets.GIST_ID }} --add "valid-domains.txt"
+
+    - name: Configure Git
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+
+    - name: Commit and push changes
+      run: |
+        git add aggregate/data
+        git commit -m "Add generated output.yaml"
+        git push
